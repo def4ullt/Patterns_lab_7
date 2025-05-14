@@ -1,5 +1,6 @@
 import com.google.gson.*;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -16,9 +17,15 @@ import java.util.stream.Collectors;
 public class TaskManager {
     private List<Task> tasks = new ArrayList<>();
     private int nextId = 1;
+    private final Gson gson;
 
-    public void createTask() {
-        Scanner sc = new Scanner(System.in);
+
+    @Inject
+    public TaskManager(Gson gson) {
+        this.gson = gson;
+    }
+
+    public void createTask(Scanner sc) {
 
         System.out.println("Please enter the name of the task you would like to add(press ENTER to exit): ");
         String name = sc.nextLine();
@@ -55,7 +62,6 @@ public class TaskManager {
 
 
     public void saveTasks() {
-        Gson gson = new Gson();
         JsonArray jsonArray = new JsonArray();
         for (Task task : tasks) {
             jsonArray.add(task.getJsonObject());
@@ -85,6 +91,8 @@ public class TaskManager {
             {
                 JsonObject taskObject = element.getAsJsonObject();
                 int id = taskObject.get("id").getAsInt();
+                if(id >= nextId)
+                    nextId = id + 1;
                 String name = taskObject.get("name").getAsString();
                 String text = taskObject.get("text").getAsString();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

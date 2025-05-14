@@ -8,10 +8,11 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         Scanner sc = new Scanner(System.in);
-        TaskManager taskManager = new TaskManager();
+
+        AppInjector appInjector = DaggerAppInjector.create();
+        TaskManager taskManager = appInjector.getTaskManager();
         taskManager.loadTasks();
         boolean active = true;
-        taskManager.loadTasks();
         while (active) {
             System.out.println("Enter command:");
 
@@ -26,7 +27,6 @@ public class Main {
                     System.out.println("Goodbye! ヾ(•ω•`)o");
                     taskManager.saveTasks();
                     active = false;
-                    taskManager.saveTasks();
                     break;
                 }
                 case "help": {
@@ -42,7 +42,7 @@ public class Main {
                     break;
                 }
                 case "create": {
-                    taskManager.createTask();
+                    taskManager.createTask(sc);
                     break;
                 }
                 case "delete": {
@@ -124,6 +124,7 @@ public class Main {
                     } else {
                         System.out.println("Invalid edit command. Use edit <task_name>");
                     }
+                    break;
                 }
                 default: {
                     System.out.println("Invalid command");
